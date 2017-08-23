@@ -11,6 +11,7 @@ function plugin_voicerecognition_voicetotext_v1(){
   var onaudiostart = function(){}
   var onaudioend =   function(){}
   var onresult =     function(){}
+  var command = [{word: ['speech'], method: function(){alert('You said speech!');}}, {word: ['buto'], method: function(){alert('You said buto!');}}]
   var text = "";
   this.setTargetId =  function(v){target_id = v;}
   this.setLang =      function(v){lang=v;}
@@ -21,6 +22,7 @@ function plugin_voicerecognition_voicetotext_v1(){
   this.onaudiostart = function(v){onaudiostart=v;}
   this.onaudioend =   function(v){onaudioend=v;}
   this.onresult =     function(v){onresult=v;}
+  this.setCommand =   function(v){command = v;}
   this.start =        function(){
     if(started){
       // Already started!
@@ -31,7 +33,7 @@ function plugin_voicerecognition_voicetotext_v1(){
       recognition.onstart      = function(event) {onstart(); started = true;}
       recognition.onend        = function(event) {onend();   recognition.start();} //
       recognition.onsoundstart = function(event) {onsoundstart();}
-      recognition.onsoundend   = function(event) {onsoundend();}
+      recognition.onsoundend   = function(event) {onsoundend(); text += "<hr>"; }
       recognition.onaudiostart = function(event) {onaudiostart();}
       recognition.onaudioend   = function(event) {onaudioend();}
       recognition.onresult   = function(event) {self.handle_result(); onresult();}
@@ -40,17 +42,34 @@ function plugin_voicerecognition_voicetotext_v1(){
   }
   this.handle_result = function(){
     if(started){
-      var text_last = "";
-      for(var i=event.resultIndex; i<event.results.length; i++){
-        var transcript = event.results[i][0].transcript;
-        transcript.replace("\n", "<br>");
-        if(event.results[i].isFinal){
-          text += " "+transcript;
+      /**
+       * Run methods depending on last word.
+       */
+      var word = event.results[event.results.length-1][0].transcript.trim().toLowerCase();
+      for(var i=0;i<command.length;i++){
+        for(var j=0;j<command[i].word.length;j++){
+          if(command[i].word[j]==word){
+            command[i].method();
+            break;
+          }
         }
-        else{
-          text_last += transcript;
+      }
+      /**
+       * Set words in a element.
+       */
+      if(target_id){
+        var text_last = "";
+        for(var i=event.resultIndex; i<event.results.length; i++){
+          var transcript = event.results[i][0].transcript;
+          transcript.replace("\n", "<br>");
+          if(event.results[i].isFinal){
+            text += " "+transcript;
+          }
+          else{
+            text_last += transcript;
+          }
+          document.getElementById(target_id).innerHTML = text + ' <span style="color: #999;">' + text_last + '</span>';
         }
-        document.getElementById(target_id).innerHTML = text + ' <span style="color: #999;">' + text_last + '</span>';
       }
     }
   }
