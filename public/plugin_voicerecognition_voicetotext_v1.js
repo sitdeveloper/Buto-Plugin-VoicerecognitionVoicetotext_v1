@@ -4,6 +4,8 @@ function plugin_voicerecognition_voicetotext_v1(){
   var target_id = null;
   var lang      = 'en-US';
   var last_word = null;
+  var counter = 0;
+  this.getCounter = function(){return counter;}
   var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
   var onstart =      function(){}
   var onend =        function(){}
@@ -54,7 +56,8 @@ function plugin_voicerecognition_voicetotext_v1(){
         var transcript = event.results[i][0].transcript;
         transcript.replace("\n", "<br>");
         if(event.results[i].isFinal){
-          text += " "+transcript;
+          counter++;
+          text += counter+": "+transcript+"<br>";
           last_word = transcript.trim().toLowerCase();
         }
         else{
