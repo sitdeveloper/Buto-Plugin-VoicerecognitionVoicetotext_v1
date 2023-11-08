@@ -1,0 +1,23 @@
+version: 1.0.1
+history:
+  1.0.1:
+    date: '2023-11-08'
+    title: 'Readme'
+    description: 'Readme improvements.'
+  1.0.0:
+    date: '2019-11-01'
+    title: 'First version'
+    description: 'First version. Manifest created.'
+plugin: {  }
+sys:
+  -
+    name: mercury
+    version:
+      - 2.99.3
+php:
+  version:
+    - 8.2.0
+author: null
+links: null
+description: ''
+third_part_software: null
